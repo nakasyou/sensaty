@@ -1,4 +1,5 @@
 import type { Words, Word } from "../dataset/define.ts"
+import { nomalize } from "./nomalizer/mod.ts"
 
 export interface AnalyzerInit {
   dataset: Words
@@ -27,7 +28,7 @@ export class Analyzer {
       if (word.word instanceof RegExp) {
         wordRegExp = word.word
       } else {
-        wordRegExp = new RegExp(word.word.replace(/\/\+\[\]\./g, s => '\\' + s), 'g')
+        wordRegExp = new RegExp(nomalize(word.word.replace(/\/\+\[\]\./g, s => '\\' + s)), 'g')
       }
       return {
         ...word,
@@ -36,6 +37,7 @@ export class Analyzer {
     })
   }
   analyze (text: string) {
+    text = nomalize(text)
     const result: AnalyzeResult = []
     for (const datasetData of this.dataset) {
       const regexp = new RegExp(datasetData.word)
